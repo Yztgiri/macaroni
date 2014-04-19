@@ -1,0 +1,87 @@
+\documentclass[10pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\begin{document}
+Couche:
+\begin{itemize}
+    \item{$B_d^l$ borne inférieure pour la taille de la couche sur la dim. $d$ (entrée)}
+    \item{$B_d^u$ borne inférieure pour la taille de la couche sur la dim. $d$ (entrée)}
+    \item{$S_{\max}^d$ taille maximale pour la dimension $d$ sur toutes les rangées}
+    \item{$S_{\min}^d$ taille minimale pour la dimension $d$ sur toutes les rangées}
+    \item{$SO^d$ taille de la couche selon la dimension $d$ (orienté)}
+    \item{$O$ orientation de la couche}
+\end{itemize}
+
+Rangées:
+\begin{itemize}
+    \item{$SN_r^d$ taille de la rangée $r$ selon la dimension $d$ (non-orienté)}
+    \item{$SO_r^d$ taille de la rangée $r$ selon la dimension $d$ (orienté)}
+    \item{$o_r$ orientation de la rangée $r$}
+    \item{$S_{\max}^r$ taille du plus grand objet de la rangée $r$}
+    \item{$S_{\min}^r$ taille du plus petit objet de la rangée $r$}
+    \item{$V_r$ = 1 si la rangée est utilisée}
+\end{itemize}
+
+Objets:
+\begin{itemize}
+    \item{$x_{or}{\theta}$ = 1 si objet $o$ dans rangée $r$, orientation $\theta$ pour l'objet.}
+    \item{$S_o^d$ = taille de l'objet $o$ sur la dim. $d$ (entrée)}
+\end{itemize}
+
+Remarques : 
+\begin{itemize}
+    \item{$(C15)$, $C(19)$, $C(21)$, $C(24)$ implicte par la formulation.}
+    \item{$(C16)$ implicite par $k$ le nombre de rangées maximum (à vérifier s'il n'y a pas intérêt à ajouter une rangée).}
+    \item{$C(2)$, $(C5)$, $(C12)$, $C(18)$ implicite par le choix des objets envoyés au PL.}
+    \item{Si c'est la couche la plus haute, relaxer $C(10)$ et $C(18)$.}
+    \item{On suppose que $C23$ s'applique sur la dimension de l'orientation ($x_{or}^d = 1$)}
+\end{itemize}
+
+\begin{displaymath}
+    \begin{array}{l}
+        \min \sum_{r = 1}^kSO_{r}^2 \\
+        \quad \sum_{r = 1}^k x_{or}^1 = 0 \quad (C_1) \\
+        \\
+        \quad \sum_{r = 1}^k (x_{or}^1 + x_{or}^2) \geq 1 \quad \forall o \\
+        \quad \left. \sum_{o = 1}^n (x_{or}^1 + x_{or}^2) \leq \beta_R \quad \forall r \right\} (C22) \\
+        \\
+        \quad \left.
+            \begin{array}{rll}
+                x_{or}^1 S_o^1 + x_{or}^2 S_o^2 - o_rM & \leq SO_r^1 & \forall r, o \\
+                \sum_{o = 1}^n [ x_{or}^1 S_o^2 + x_{or}^2 S_o^1 ] - o_rM & \leq SO_r^2 & \forall r \\
+                \\
+                \sum_{o = 1}^n [ x_{or}^1 S_o^1 + x_{or}^2 S_o^2 ] - (1 - o_r)M & \leq SO_r^1 & \forall r \\
+                x_{or}^1 S_o^2 + x_{or}^2 S_o^1 - (1 - o_r)M & \leq SO_r^2 & \forall r, o \\
+        \end{array} \right\} (C25) \\
+        \\
+        \quad \left.
+            \begin{array}{rll}
+                x_{or}^1S_o^1 + x_{or}^2S_o^2 - (x_{pr}^1S_p^1 + x_{pr}^2S_p^2) & \leq 0 + (1 - V_{op}^{23})M & \forall r, o < p \\
+                x_{or}^1S_o^1 + x_{or}^2S_o^2 - \delta^R (x_{pr}^1S_p^1 + x_{pr}^2S_p^2) & \geq 0 + (1 - V_{op}^{23})M & \forall r, o < p \\
+                \\
+                x_{pr}^1S_p^1 + x_{pr}^2S_p^2 -  (x_{or}^1S_o^1 + x_{or}^2S_o^2) & \leq 0 + V_{op}^{23}M & \forall r, o < p \\
+                x_{pr}^1S_p^1 + x_{pr}^2S_p^2 - \delta^R (x_{or}^1S_o^1 + x_{or}^2S_o^2) & \geq 0 + V_{op}^{23}M & \forall r, o < p \\
+        \end{array} \right\} (C23) \\
+        \\
+        \quad \left.
+            \begin{array}{rll}
+                SO_r^d - SO_s^d & \leq 0 + V_{rs}^{17}M & \forall d, r < s \\
+                SO_r^d - \delta^L SO_s^d & \geq 0 + V_{rs}^{17}M & \forall d, r < s \\
+                \\
+                SO_s^d - SO_r^d & \leq 0 + (1 - V_{rs})^{17}M & \forall d, r < s \\
+                SO_s^d - \delta^L SO_r^d & \geq 0 + (1 - V_{rs})^{17}M & \forall d, r < s \\
+            \end{array} \right\} (C17) \\
+        \\
+        \quad \left.
+            \begin{array}{rll}
+                SO_{r}^1 & \geq B_1^l & \forall r \\
+                SO_{r}^1 & \leq B_2^u & \forall r \\
+                \sum_{r = 1}^kSO_{r}^2 & \geq B_1^l & \\
+                \sum_{r = 1}^kSO_{r}^2 & \leq B_2^u & \\
+            \end{array} \right\} (C10)
+    \end{array}
+\end{displaymath}
+
+\end{document}
