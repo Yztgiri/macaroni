@@ -34,8 +34,8 @@ struct bin{
 
 struct item{
 	int item_code;
-	int width;
-	int length;	
+	int width;//Dimension 1
+	int length;//Dimension 2
 	int height;	
 	double weight;
 	string material;

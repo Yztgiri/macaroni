@@ -193,59 +193,62 @@ void creer_LP(instance *inst){
 	int objets = (int)inst->list_item.size();
 	int bigM = 0;
 	for(list<item *>::iterator it = inst->list_item.begin() ; it != inst->list_item.end() ; it++){
-		bigM = bigM + (*it)->width + (*it)->length + (*it)->height;
+i		bigM = bigM + (*it)->width + (*it)->length + (*it)->height;
 	}
 
 	input<<"Minimize ";
 
 	for(int r=1 ; r<=inst->beta_L ; r++){
-		input<<"SO^2"<<r<<"+ ";
+		input<<"SO,2"<<r<<"+ ";
 	}
-	input<<"\n";
+	input<<" 0 \n";
 	input<<"Subject To\n";
 
 	//C1
 	for(int o=1 ; o<=objets ; o++){
 		for(int r=1 ; r <=inst->beta_L ; r++){
-			input<<"x_"<<o<<""<<r<<"^"<<1<<" + ";
+			input<<"x"<<o<<","<<r<<","<<1<<" + ";
 		}
-		input<<" = 0\n";
+		input<<" 0 = 0\n";
 	}
 
 	//C22
 	for(int o=1 ; o<=objets ; o++){
 		for(int r=1 ; r <=inst->beta_L ; r++){
-			input<<"x_"<<o<<""<<r<<"^"<<1<<" + "<<"x_"<<o<<""<<r<<"^"<<2<<" + ";
+			input<<"x"<<o<<","<<r<<","<<1<<" + "<<"x_"<<o<<","<<r<<","<<2<<" + ";
 		}
-		input<<" >= 1\n";
+		input<<" 0 >= 1\n";
 	}
 	for(int r=1 ; r <=inst->beta_L ; r++){		
 		for(int o=1 ; o<=objets ; o++){
-			input<<"x_"<<o<<""<<r<<"^"<<1<<" + "<<"x_"<<o<<""<<r<<"^"<<2<<" + ";
+			input<<"x"<<o<<","<<r<<","<<1<<" + "<<"x_"<<o<<","<<r<<","<<2<<" + ";
 		}
-		input<<" <= "<<inst->beta_R<<"\n";
+		input<<" 0 <= "<<inst->beta_R<<"\n";
 	}
 
 	//C25
+	list<item *>::iterator it;
+	it = inst->list_item.begin();
 	for(int o=1 ; o<=objets ; o++){
 		for(int r=1 ; r <=inst->beta_L ; r++){
-			input<<"x_"<<o<<""<<r<<"^"<<1<<" * S_"<<o<<"^1"<<" + "<<"x_"<<o<<""<<r<<"^"<<2<<" * S_"<<o<<"^2"<<" - o_"<<r<<" <= SO_"<<r<<"^1\n";
+			input<<(*it)->width<<"x"<<o<<","<<r<<","<<1<<" + "<<"x"<<(*it)->length<<o<<""<<r<<","<<2<<" - o"<<r<<" <= SO,"<<r<<",1\n";
 		}
+		it++;
 	}
 
 	input<<"Bounds\n";
 	for(int o=1 ; o<=objets ; o++){
 		for(int r=1 ; r <=inst->beta_L ; r++){
-			input<<" 0 <= "<<"x_"<<o<<""<<r<<"^"<<1<<" <= 1\n";
-			input<<" 0 <= "<<"x_"<<o<<""<<r<<"^"<<2<<" <= 1\n";
+			input<<" 0 <= "<<"x"<<o<<","<<r<<","<<1<<" <= 1\n";
+			input<<" 0 <= "<<"x"<<o<<","<<r<<","<<2<<" <= 1\n";
 		}
 	}
 	
 	input<<"Binary\n";
 	for(int o=1 ; o<=objets ; o++){
 		for(int r=1 ; r <=inst->beta_L ; r++){
-			input<<"x_"<<o<<""<<r<<"^"<<1<<"\n";
-			input<<"x_"<<o<<""<<r<<"^"<<2<<"\n";
+			input<<"x"<<o<<","<<r<<","<<1<<"\n";
+			input<<"x"<<o<<","<<r<<","<<2<<"\n";
 		}
 	}
 
