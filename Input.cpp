@@ -199,7 +199,7 @@ void creer_LP(instance *inst){
 	input<<"Minimize ";
 
 	for(int r=1 ; r<=inst->beta_L ; r++){
-		input<<"SO^2"<<r<<"+ ";
+		input<<"+ SO,2"<<r<<" ";
 	}
 	input<<"\n";
 	input<<"Subject To\n";
@@ -207,46 +207,144 @@ void creer_LP(instance *inst){
 	//C1
 	for(int o=1 ; o<=objets ; o++){
 		for(int r=1 ; r <=inst->beta_L ; r++){
-			input<<"x_"<<o<<""<<r<<"^"<<1<<" + ";
+			input<<"+ x"<<o<<","<<r<<","<<1<<" ";
 		}
-		input<<" = 0\n";
+		input<<"= 0\n";
 	}
 
 	//C22
 	for(int o=1 ; o<=objets ; o++){
 		for(int r=1 ; r <=inst->beta_L ; r++){
-			input<<"x_"<<o<<""<<r<<"^"<<1<<" + "<<"x_"<<o<<""<<r<<"^"<<2<<" + ";
+			input<<" + x"<<o<<","<<r<<","<<1<<" + "<<"x"<<o<<","<<r<<","<<2<<" ";
 		}
 		input<<" >= 1\n";
 	}
 	for(int r=1 ; r <=inst->beta_L ; r++){		
 		for(int o=1 ; o<=objets ; o++){
-			input<<"x_"<<o<<""<<r<<"^"<<1<<" + "<<"x_"<<o<<""<<r<<"^"<<2<<" + ";
+			input<<" + x"<<o<<","<<r<<","<<1<<" + "<<"x"<<o<<","<<r<<","<<2<<" ";
 		}
-		input<<" <= "<<inst->beta_R<<"\n";
+		input<<"<= "<<inst->beta_R<<"\n";
 	}
 
-	//C25
+//	//C25
+	list<item *>::iterator it;
+	it = inst->list_item.begin();
 	for(int o=1 ; o<=objets ; o++){
 		for(int r=1 ; r <=inst->beta_L ; r++){
-			input<<"x_"<<o<<""<<r<<"^"<<1<<" * S_"<<o<<"^1"<<" + "<<"x_"<<o<<""<<r<<"^"<<2<<" * S_"<<o<<"^2"<<" - o_"<<r<<" <= SO_"<<r<<"^1\n";
+			input<<(*it)->width<<"x"<<o<<","<<r<<","<<1<<" + "<<(*it)->length<<"x"<<o<<","<<r<<","<<2<<" - "<<bigM<<"o"<<r<<" - SO"<<r<<",1 <= 0\n";
 		}
+		it++;
+	}
+	for(int r=1 ; r <=inst->beta_L ; r++){
+		it = inst->list_item.begin();
+		for(int o=1 ; o<=objets ; o++){
+			input<<"+ "<<(*it)->length<<" x"<<o<<","<<r<<",1 + "<<(*it)->width<<" x"<<o<<","<<r<<",2 ";
+			it++;
+		}
+		input<<"- SO"<<r<<",2 "<<" - "<<bigM<<" o"<<r<< " <= 0\n";
+	}
+	it = inst->list_item.begin();
+	for(int o=1 ; o<=objets ; o++){
+		for(int r=1 ; r <=inst->beta_L ; r++){
+			input<<(*it)->length<<"x"<<o<<","<<r<<","<<1<<" + "<<(*it)->width<<"x"<<o<<","<<r<<","<<2<<" + "<<bigM<<"o"<<r<<" - SO"<<r<<",2 <= "<<bigM<<"\n";
+		}
+		it++;
+	}
+	for(int r=1 ; r <=inst->beta_L ; r++){
+		it = inst->list_item.begin();
+		for(int o=1 ; o<=objets ; o++){
+			input<<"+ "<<(*it)->width<<" x"<<o<<","<<r<<",1 + "<<(*it)->length<<" x"<<o<<","<<r<<",2  ";
+			it++;
+		}
+		input<<"- SO"<<r<<",2 + "<<bigM<<" o"<<r<<" <= "<<bigM<<"\n";
+		
 	}
 
+	//C23
+	list<item *>::iterator it_o;
+	for(int r=1 ; r <=inst->beta_L ; r++){
+		it = inst->list_item.begin();
+		for(int p=1 ; p<=objets ; p++){
+			it_o = inst->list_item.begin();
+			for(int o=1 ; o<p ; o++){
+				input<<(*it_o)->width<<"x"<<o<<","<<r<<",1 + "<<(*it_o)->length<<"x"<<o<<","<<r<<",2 - "<<(*it)->width<<"x"<<p<<","<<r<<",1 - "<<(*it)->length<<"x"<<p<<","<<r<<",2 + "<<bigM<<"v23,"<<o<<","<<p<<" <= "<<bigM<<"\n";
+				it_o++;
+			}
+			it++;
+		}
+	}
+	for(int r=1 ; r <=inst->beta_L ; r++){
+		it = inst->list_item.begin();
+		for(int p=1 ; p<=objets ; p++){
+			it_o = inst->list_item.begin();
+			for(int o=1 ; o<p ; o++){
+				input<<(*it_o)->width<<"x"<<o<<","<<r<<",1 + "<<(*it_o)->length<<"x"<<o<<","<<r<<",2 - "<<(*it)->width*inst->delta_R<<"x"<<p<<","<<r<<",1 - "<<(*it)->length*inst->delta_R<<"x"<<p<<","<<r<<",2 + "<<bigM<<"v23,"<<o<<","<<p<<" >= "<<bigM<<"\n";
+				it_o++;
+			}
+			it++;
+		}
+	}
+	for(int r=1 ; r <=inst->beta_L ; r++){
+		it = inst->list_item.begin();
+		for(int p=1 ; p<=objets ; p++){
+			it_o = inst->list_item.begin();
+			for(int o=1 ; o<p ; o++){
+				input<<(*it)->width<<"x"<<p<<","<<r<<",1 + "<<(*it)->length<<"x"<<p<<","<<r<<",2 - "<<(*it_o)->width<<"x"<<o<<","<<r<<",1 - "<<(*it_o)->length<<"x"<<o<<","<<r<<",2 + "<<bigM<<"v23,"<<o<<","<<p<<" <= "<<bigM<<"\n";
+				it_o++;
+			}
+			it++;
+		}
+	}
+	for(int r=1 ; r <=inst->beta_L ; r++){
+		it = inst->list_item.begin();
+		for(int p=1 ; p<=objets ; p++){
+			it_o = inst->list_item.begin();
+			for(int o=1 ; o<p ; o++){
+				input<<(*it)->width<<"x"<<p<<","<<r<<",1 + "<<(*it)->length<<"x"<<p<<","<<r<<",2 - "<<(*it_o)->width*inst->delta_R<<"x"<<o<<","<<r<<",1 - "<<(*it_o)->length*inst->delta_R<<"x"<<o<<","<<r<<",2 + "<<bigM<<"v23,"<<o<<","<<p<<" >= "<<bigM<<"\n";
+				it_o++;
+			}
+			it++;
+		}
+	}
+	
 	input<<"Bounds\n";
+	//SOr,1/2
+	for(int r=1 ; r <=inst->beta_L ; r++){
+		input<<"0 <= SO"<<r<<",1 <="<<bigM<<" \n";
+		input<<"0 <= SO"<<r<<",2 <="<<bigM<<" \n";
+	}
+	//xor
+	for(int p=1 ; p<=objets ; p++){
+		for(int o=1 ; o<p ; o++){
+			input<<"0 <= v23,"<<o<<","<<p<<" <= 1\n";
+		}
+	}
 	for(int o=1 ; o<=objets ; o++){
 		for(int r=1 ; r <=inst->beta_L ; r++){
-			input<<" 0 <= "<<"x_"<<o<<""<<r<<"^"<<1<<" <= 1\n";
-			input<<" 0 <= "<<"x_"<<o<<""<<r<<"^"<<2<<" <= 1\n";
+			input<<" 0 <= "<<"x"<<o<<","<<r<<","<<1<<" <= 1\n";
+			input<<" 0 <= "<<"x"<<o<<","<<r<<","<<2<<" <= 1\n";
 		}
 	}
 	
 	input<<"Binary\n";
 	for(int o=1 ; o<=objets ; o++){
 		for(int r=1 ; r <=inst->beta_L ; r++){
-			input<<"x_"<<o<<""<<r<<"^"<<1<<"\n";
-			input<<"x_"<<o<<""<<r<<"^"<<2<<"\n";
+			input<<"x"<<o<<","<<r<<","<<1<<"\n";
+			input<<"x"<<o<<","<<r<<","<<2<<"\n";
 		}
+	}
+	for(int r=1 ; r <=inst->beta_L ; r++){
+		input<<"o"<<r<<"\n";
+	}
+	for(int p=1 ; p<=objets ; p++){
+		for(int o=1 ; o<p ; o++){
+			input<<"v23,"<<o<<","<<p<<"\n";
+		}
+	}
+	
+	//or
+	for(int r=1 ; r <=inst->beta_L ; r++){
+		input<<"o"<<r<<"\n";
 	}
 
 	input<<"End\n";
@@ -255,8 +353,10 @@ void creer_LP(instance *inst){
 	commande.str("");
 	commande<<"/home/ternier/PING/scip/scipoptsuite-3.1.0/scip-3.1.0/bin/scip -c \"read "<<"input_LP.lp"<< " opt write solution "<<"output_LP.sol"<<" quit \""<<endl;
 	cout<<commande.str().c_str();
-	if (system(commande.str().c_str()))
+//	if (system(commande.str().c_str()))
+	if(system("/home/ternier/PING/scip/scipoptsuite-3.1.0/scip-3.1.0/bin/scip -c \"read input_LP.lp opt write solution output_LP.sol quit \""))
 		cout<<"End of Scip"<<endl;
 
+	cout<<commande.str().c_str();
 	return;
    }
