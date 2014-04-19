@@ -1,0 +1,98 @@
+\documentclass[10pt,twocolumn]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\begin{document}
+\small
+Liste des variables :
+Couche:
+\begin{itemize}
+    \item{$B_d^l$ borne inférieure pour la taille de la couche sur la dim. $d$ (entrée)}
+    \item{$B_d^u$ borne inférieure pour la taille de la couche sur la dim. $d$ (entrée)}
+    \item{$S_{\max}^d$ taille maximale pour la dimension $d$ sur toutes les rangées}
+    \item{$S_{\min}^d$ taille minimale pour la dimension $d$ sur toutes les rangées}
+    \item{$SO^d$ taille de la couche selon la dimension $d$ (orienté)}
+    \item{$O$ orientation de la couche}
+\end{itemize}
+
+Rangées:
+\begin{itemize}
+    \item{$SN_r^d$ taille de la rangée $r$ selon la dimension $d$ (non-orienté)}
+    \item{$SO_r^d$ taille de la rangée $r$ selon la dimension $d$ (orienté)}
+    \item{$o_r$ orientation de la rangée $r$}
+    \item{$S_{\max}^r$ taille du plus grand objet de la rangée $r$}
+    \item{$S_{\min}^r$ taille du plus petit objet de la rangée $r$}
+    \item{$V_r$ = 1 si la rangée est utilisée}
+\end{itemize}
+
+Objets:
+\begin{itemize}
+    \item{$x_{or}{\theta}$ = 1 si objet $o$ dans rangée $r$, orientation $\theta$ pour l'objet.}
+    \item{$S_o^d$ = taille de l'objet $o$ sur la dim. $d$ (entrée)}
+\end{itemize}
+
+Remarques : 
+\begin{itemize}
+    \item{$(C15)$, $C(19)$, $C(21)$, $C(24)$ implicte par la formulation.}
+    \item{$(C16)$ implicite par $k$ le nombre de rangées maximum (à vérifier s'il n'y a pas intérêt à ajouter une rangée).}
+    \item{$C(2)$, $(C5)$, $(C12)$, $C(18)$ implicite par le choix des objets envoyés au PL.}
+    \item{Si c'est la couche la plus haute, relaxer $C(10)$ et $C(18)$.}
+\end{itemize}
+
+\begin{displaymath}
+    \begin{array}{l}
+        \min SO^1 + SO^2 \\
+        \quad x_{or}^1 + x_{or}^2 = 0 \quad (C_1) \\
+        \\
+        \quad \sum_{r = 1}^k (x_{or}^1 + x_{or}^2) \leq 1 \quad \forall o \\
+        \quad \left. \sum_{o = 1}^n (x_{or}^1 + x_{or}^2) \leq \beta_R \quad \forall r \right\} (C22) \\
+        \\
+        \quad \left.
+            \begin{array}{rll}
+                x_{or}^1 S_o^1 + x_{or}^2 S_o^2 & \leq SN_r^1 & \forall r \\
+                \sum_{o = 1}^n \left[ x_{or}^1 S_o^1 + x_{or}^2 SN_o^2 \right] & \leq SN_r^2 & \forall r
+            \end{array} \right\} (C25) \\
+        \\
+        \quad \left.
+            \begin{array}{rll}
+                SN_r^1 - o_rM & \leq SO_r^1 & \forall r \\
+                SN_r^2 - (1 - o_r)M & \leq SO_r^2 & \forall r \\
+                \\
+                \sum_{r = 1}^k SN_r^1 - o_rM & \leq SO_r^1 & \forall r \\
+                \sum_{r = 1}^k SN_r^2 - (1 - o_r)M & \leq SO_r^2 & \forall r \\
+        \end{array} \right\} (\mbox{non-ori} \rightarrow \mbox{ori}) \\
+        \\
+        \quad \left.
+            \begin{array}{rll}
+                x_{or}^1S_o^1 + x_{or}^2S_o^2 & \leq S_{\max}^r & \forall r \\
+                x_{or}^1S_o^1 + x_{or}^2S_o^2 + (1 - x_{or}^1 - x_{or}^2)M & \geq S_{\min}^r & \forall r \\
+                S_{\min}^r - \delta^R S_{\max}^r & \leq 0 & \forall r
+        \end{array} \right\} (C23) \\
+        \\
+        \quad \left.
+            \begin{array}{rll}
+                SO_r^d & \leq S_{\max}^d & \forall r,d \\
+                SO_r^d & \leq V_rM & \forall r,d \\
+                SO_r^d & \geq S_{\min}^d + (1 - V_r)M & \forall r,d \\
+                S_{\min}^d - \delta^L S_{\max}^d & \leq 0 & \forall d \\
+            \end{array} \right\} (C17) \\
+        \\
+        \quad \left.
+            \begin{array}{rll}
+                SO_{r}^1 - o_r M & \leq SO^1 & \forall r \\
+                SO_{r}^2 - (1 - o_r) M & \leq SO^1 & \forall r \\
+                \\
+                \sum_{r = 1}^kSO_{r}^1 - (1 - o_r) M & \leq SO^2 & \forall r \\
+                \sum_{r = 1}^kSO_{r}^2 - o_r M & \leq SO^2 & \forall r \\
+            \end{array} \right\} (C20) \\
+        \\
+        \quad \left.
+            \begin{array}{rll}
+                SO^d & \geq B_d^l & \forall d \\
+                SO^d & \leq B_d^u & \forall d \\
+            \end{array} \right\} (C10)
+    \end{array}
+\end{displaymath}
+
+\end{document}
