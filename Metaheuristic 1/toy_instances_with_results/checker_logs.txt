@@ -1,0 +1,8 @@
+Checker Challenge ESICUP V1.0 14/03/2014
+
+
+Start of checking: 2014/03/17 14:08:59
+data root directory: .\toy_instances_with_results
+global logs directory: .\toy_instances_with_results
+instances file name: .\toy_instances_with_results/list_instances.csv
+End of check

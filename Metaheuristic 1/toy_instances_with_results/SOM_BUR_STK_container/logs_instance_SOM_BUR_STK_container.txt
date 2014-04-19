@@ -1,0 +1,8 @@
+Checker Challenge ESICUP V1.0 14/03/2014
+
+
+objective 1: value = 228.42846
+objective 2: value = 34.06034999999999
+objective 3: value = 41910
+objective 4: value = 19462
+results files OK
