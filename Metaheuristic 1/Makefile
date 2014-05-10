@@ -5,3 +5,6 @@ exec : main.o
 
 main.o : main.c
 	gcc $(PARAMS) -c main.c
+
+clean :
+	rm *.o
